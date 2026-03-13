@@ -157,10 +157,24 @@
       min-width: 160px;
     }
 
+    .btn-success {
+      background: #16a34a;
+      color: white;
+      flex: 1;
+      min-width: 220px;
+    }
+
     .error {
       display: none;
       margin-top: 14px;
       color: #b91c1c;
+      font-weight: bold;
+    }
+
+    .success-message {
+      display: none;
+      margin-top: 14px;
+      color: #166534;
       font-weight: bold;
     }
 
@@ -281,6 +295,26 @@
       position: relative;
       width: 100%;
       height: 320px;
+    }
+
+    .share-box {
+      margin-top: 18px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .share-box h4 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #111827;
+    }
+
+    .share-box p {
+      color: #4b5563;
+      line-height: 1.5;
+      margin-bottom: 12px;
     }
 
     .footer-note {
@@ -462,6 +496,7 @@
       </div>
 
       <div class="error" id="dailyErrorMessage"></div>
+      <div class="success-message" id="shareSuccessMessage"></div>
 
       <div class="result" id="dailyResultBox">
         <h3>Resultado real do seu dia</h3>
@@ -518,6 +553,18 @@
             <canvas id="dailyChart"></canvas>
           </div>
         </div>
+
+        <div class="share-box">
+          <h4>Compartilhe seu resultado</h4>
+          <p>
+            Mostre para outros motoristas quanto realmente sobrou no seu dia e envie sua calculadora pelo WhatsApp, e-mail ou outro app.
+          </p>
+
+          <div class="buttons">
+            <button class="btn-success" onclick="compartilharResultado()">Compartilhar meu resultado</button>
+            <button class="btn-secondary" onclick="compartilharNoWhatsApp()">Enviar no WhatsApp</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -529,6 +576,17 @@
   <script>
     let custoTotalPorKmCalculado = 0;
     let dailyChartInstance = null;
+
+    let ultimoResultado = {
+      dailyProfit: 0,
+      profitPerHour: 0,
+      profitPerKm: 0,
+      classification: "",
+      dailyGross: 0,
+      dailyTotalCost: 0
+    };
+
+    const SITE_URL = "https://danielmartins-dev.github.io/calculadora-motorista-pro/";
 
     function formatCurrency(value) {
       return Number(value).toLocaleString("pt-BR", {
@@ -555,6 +613,17 @@
       const el = document.getElementById(id);
       el.style.display = "none";
       el.textContent = "";
+    }
+
+    function mostrarSucesso(mensagem) {
+      const el = document.getElementById("shareSuccessMessage");
+      el.style.display = "block";
+      el.textContent = mensagem;
+
+      setTimeout(() => {
+        el.style.display = "none";
+        el.textContent = "";
+      }, 3000);
     }
 
     function preencherExemplo() {
@@ -627,13 +696,13 @@
       let nivel = 0;
 
       if (profitPerHour < 20) {
-        nivel = 1; // Fraco
+        nivel = 1;
       } else if (profitPerHour < 30) {
-        nivel = 2; // Razoável
+        nivel = 2;
       } else if (profitPerHour < 40) {
-        nivel = 3; // Bom
+        nivel = 3;
       } else {
-        nivel = 4; // Excelente
+        nivel = 4;
       }
 
       if (profitPerKm < 0.60) {
@@ -683,8 +752,66 @@
       });
     }
 
+    function gerarTextoCompartilhamento() {
+      return `Hoje calculei meu lucro real como motorista de app.%0A%0A` +
+        `Lucro líquido: ${encodeURIComponent(formatCurrency(ultimoResultado.dailyProfit))}%0A` +
+        `Lucro por hora: ${encodeURIComponent(formatCurrency(ultimoResultado.profitPerHour))}%0A` +
+        `Lucro por km: ${encodeURIComponent(formatCurrency(ultimoResultado.profitPerKm))}%0A` +
+        `Classificação do dia: ${encodeURIComponent(ultimoResultado.classification)}%0A%0A` +
+        `Fiz nessa calculadora gratuita:%0A${encodeURIComponent(SITE_URL)}`;
+    }
+
+    function gerarTextoCompartilhamentoNormal() {
+      return `Hoje calculei meu lucro real como motorista de app.\n\n` +
+        `Lucro líquido: ${formatCurrency(ultimoResultado.dailyProfit)}\n` +
+        `Lucro por hora: ${formatCurrency(ultimoResultado.profitPerHour)}\n` +
+        `Lucro por km: ${formatCurrency(ultimoResultado.profitPerKm)}\n` +
+        `Classificação do dia: ${ultimoResultado.classification}\n\n` +
+        `Fiz nessa calculadora gratuita:\n${SITE_URL}`;
+    }
+
+    async function compartilharResultado() {
+      if (!ultimoResultado.classification) {
+        mostrarErro("dailyErrorMessage", "Calcule o resultado do dia antes de compartilhar.");
+        return;
+      }
+
+      const shareText = gerarTextoCompartilhamentoNormal();
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Meu resultado como motorista de app",
+            text: shareText,
+            url: SITE_URL
+          });
+          return;
+        } catch (error) {
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(shareText);
+        mostrarSucesso("Texto copiado! Agora é só colar onde quiser.");
+      } catch (error) {
+        mostrarErro("dailyErrorMessage", "Não foi possível compartilhar agora. Tente copiar manualmente.");
+      }
+    }
+
+    function compartilharNoWhatsApp() {
+      if (!ultimoResultado.classification) {
+        mostrarErro("dailyErrorMessage", "Calcule o resultado do dia antes de compartilhar.");
+        return;
+      }
+
+      const texto = gerarTextoCompartilhamento();
+      const urlWhatsApp = `https://wa.me/?text=${texto}`;
+      window.open(urlWhatsApp, "_blank");
+    }
+
     function calcularLucro() {
       esconderErro("dailyErrorMessage");
+      esconderErro("shareSuccessMessage");
 
       const dailyGross = getInputValue("dailyGross");
       const dailyKm = getInputValue("dailyKm");
@@ -717,6 +844,15 @@
       const profitPerKm = dailyProfit / dailyKm;
       const netMargin = (dailyProfit / dailyGross) * 100;
       const classificacao = classificarDia(dailyProfit, profitPerHour, profitPerKm);
+
+      ultimoResultado = {
+        dailyProfit,
+        profitPerHour,
+        profitPerKm,
+        classification: classificacao,
+        dailyGross,
+        dailyTotalCost
+      };
 
       document.getElementById("dailyGrossResult").textContent = formatCurrency(dailyGross);
       document.getElementById("dailyOperationalCostResult").textContent = formatCurrency(dailyOperationalCost);
@@ -762,8 +898,17 @@
 
       esconderErro("errorMessage");
       esconderErro("dailyErrorMessage");
+      esconderErro("shareSuccessMessage");
 
       custoTotalPorKmCalculado = 0;
+      ultimoResultado = {
+        dailyProfit: 0,
+        profitPerHour: 0,
+        profitPerKm: 0,
+        classification: "",
+        dailyGross: 0,
+        dailyTotalCost: 0
+      };
 
       if (dailyChartInstance) {
         dailyChartInstance.destroy();
