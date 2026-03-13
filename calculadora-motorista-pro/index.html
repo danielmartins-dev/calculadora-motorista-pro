@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora do Motorista</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f4f7fb;
+      color: #222;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 30px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .section {
+      border: 1px solid #dbe4f0;
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .section h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .section p.section-text {
+      color: #555;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cfd6e4;
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fff;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      flex: 1;
+      min-width: 180px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: #2f6fe4;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #d1d5db;
+      color: #111827;
+    }
+
+    button:hover {
+      opacity: 0.93;
+    }
+
+    .result {
+      margin-top: 22px;
+      padding: 18px;
+      background: #f3f7fc;
+      border: 1px solid #dbe4f0;
+      border-radius: 14px;
+      display: none;
+    }
+
+    .result h3 {
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .highlight {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 2px solid #cbd5e1;
+      font-size: 22px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .profit-positive {
+      color: #15803d;
+    }
+
+    .profit-negative {
+      color: #b91c1c;
+    }
+
+    .note {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .error {
+      margin-top: 14px;
+      color: #b91c1c;
+      font-weight: bold;
+      display: none;
+    }
+
+    .info-box {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #eef4ff;
+      border: 1px solid #c7d7ff;
+      color: #1e3a8a;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .section h2 {
+        font-size: 21px;
+      }
+
+      .result-item,
+      .highlight {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Calculadora do Motorista</h1>
+    <p class="subtitle">
+      Descubra o custo real por km do seu carro e calcule seu lucro líquido diário.
+    </p>
+
+    <div class="section">
+      <h2>1) Custo real por km</h2>
+      <p class="section-text">
+        Preencha os dados do carro para calcular o custo real por km, incluindo combustível, seguro, IPVA, manutenção e depreciação.
+      </p>
+
+      <div class="form-group">
+        <label for="fuelPrice">Preço do combustível (R$ por litro)</label>
+        <input type="number" id="fuelPrice" placeholder="Ex: 6.19" step="0.01" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="kmPerLiter">Consumo do carro (km por litro)</label>
+        <input type="number" id="kmPerLiter" placeholder="Ex: 11" step="0.01" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="monthlyKm">Km rodados por mês</label>
+        <input type="number" id="monthlyKm" placeholder="Ex: 5000" step="0.01" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="annualInsurance">Valor anual do seguro (R$)</label>
+        <input type="number" id="annualInsurance" placeholder="Ex: 2800" step="0.01" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="annualIpva">Valor anual do IPVA (R$)</label>
+        <input type="number" id="annualIpva" placeholder="Ex: 1600" step="0.01" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="monthlyMaintenance">Média de manutenção mensal (R$)</label>
+        <input type="number" id="monthlyMaintenance" placeholder="Ex: 250" step="0.01" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="carValue">Valor atual do carro (R$)</label>
+        <input type="number" id="carValue" placeholder="Ex: 38000" step="0.01" min="0" />
+      </div>
+
+      <div class="buttons">
+        <button class="btn-primary" onclick="calcularCusto()">Calcular custo real por km</button>
+      </div>
+
+      <div class="error" id="errorMessage"></div>
+
+      <div class="result" id="resultBox">
+        <h3>Resultado do custo por km</h3>
+
+        <div class="result-item">
+          <span>Combustível por km</span>
+          <strong id="fuelCostResult">R$ 0,00</strong>
+        </div>
+
+        <div class="result-item">
+          <span>Seguro por km</span>
+          <strong id="insuranceCostResult">R$ 0,00</strong>
+        </div>
+
+        <div class="result-item">
+          <span>IPVA por km</span>
+          <strong id="ipvaCostResult">R$ 0,00</strong>
+        </div>
+
+        <div class="result-item">
+          <span>Manutenção por km</span>
+          <strong id="maintenanceCostResult">R$ 0,00</strong>
+        </div>
+
+        <div class="result-item">
+          <span>Depreciação por km</span>
+          <strong id="depreciationCostResult">R$ 0,00</strong>
+        </div>
+
+        <div class="highlight">
+          <span>Custo real total por km</span>
+          <span id="totalCostResult">R$ 0,00</span>
+        </div>
+
+        <p class="note">
+          A depreciação está sendo calculada automaticamente em <strong>20% ao ano</strong>,
+          com base no valor atual do carro.
+        </p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>2) Lucro líquido do dia</h2>
+      <p class="section-text">
+        Agora preencha os dados do dia. O sistema vai usar seu custo real por km para mostrar quanto realmente sobrou.
+      </p>
+
+      <div class="form-group">
+        <label for="dailyGross">Ganho bruto do dia (R$)</label>
+        <input type="number" id="dailyGross" placeholder="Ex: 320" step="0.01" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="dailyKm">Km rodados no dia</label>
+        <input type="number" id="dailyKm" placeholder="Ex: 180" step="0.01" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="dailyExtraExpenses">Gastos extras do dia (R$)</label>
+        <input type="number" id="dailyExtraExpenses" placeholder="Ex: 15" step="0.01" min="0" />
+      </div>
+
+      <div class="info-box">
+        Use em “gastos extras” apenas despesas fora do custo por km, como pedágio, estacionamento, lavagem ou alimentação.
+        Não coloque combustível aqui se ele já estiver sendo considerado no custo real por km.
+      </div>
+
+      <div class="buttons">
+        <button class="btn-primary" onclick="calcularLucro()">Calcular lucro líquido</button>
+        <button class="btn-secondary" onclick="limparCampos()">Limpar tudo</button>
+      </div>
+
+      <div class="error" id="dailyErrorMessage"></div>
+
+      <div class="result" id="dailyResultBox">
+        <h3>Resultado do dia</h3>
+
+        <div class="result-item">
+          <span>Ganho bruto do dia</span>
+          <strong id="dailyGrossResult">R$ 0,00</strong>
+        </div>
+
+        <div class="result-item">
+          <span>Custo operacional do dia</span>
+          <strong id="dailyOperationalCostResult">R$ 0,00</strong>
+        </div>
+
+        <div class="result-item">
+          <span>Gastos extras do dia</span>
+          <strong id="dailyExtraExpensesResult">R$ 0,00</strong>
+        </div>
+
+        <div class="result-item">
+          <span>Custo total do dia</span>
+          <strong id="dailyTotalCostResult">R$ 0,00</strong>
+        </div>
+
+        <div class="result-item">
+          <span>Custo real por km usado no cálculo</span>
+          <strong id="dailyCostPerKmUsed">R$ 0,00</strong>
+        </div>
+
+        <div class="highlight">
+          <span>Lucro líquido do dia</span>
+          <span id="dailyProfitResult">R$ 0,00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let custoTotalPorKmCalculado = 0;
+
+    function formatCurrency(value) {
+      return value.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function getInputValue(id) {
+      return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function mostrarErro(id, mensagem) {
+      const el = document.getElementById(id);
+      el.style.display = "block";
+      el.textContent = mensagem;
+    }
+
+    function esconderErro(id) {
+      const el = document.getElementById(id);
+      el.style.display = "none";
+      el.textContent = "";
+    }
+
+    function calcularCusto() {
+      esconderErro("errorMessage");
+
+      const fuelPrice = getInputValue("fuelPrice");
+      const kmPerLiter = getInputValue("kmPerLiter");
+      const monthlyKm = getInputValue("monthlyKm");
+      const annualInsurance = getInputValue("annualInsurance");
+      const annualIpva = getInputValue("annualIpva");
+      const monthlyMaintenance = getInputValue("monthlyMaintenance");
+      const carValue = getInputValue("carValue");
+
+      if (fuelPrice <= 0 || kmPerLiter <= 0 || monthlyKm <= 0 || carValue <= 0) {
+        mostrarErro(
+          "errorMessage",
+          "Preencha corretamente combustível, consumo, km por mês e valor do carro."
+        );
+        document.getElementById("resultBox").style.display = "none";
+        custoTotalPorKmCalculado = 0;
+        return;
+      }
+
+      const annualKm = monthlyKm * 12;
+
+      const fuelCostPerKm = fuelPrice / kmPerLiter;
+      const insuranceCostPerKm = annualInsurance / annualKm;
+      const ipvaCostPerKm = annualIpva / annualKm;
+      const maintenanceCostPerKm = monthlyMaintenance / monthlyKm;
+      const annualDepreciation = carValue * 0.20;
+      const depreciationCostPerKm = annualDepreciation / annualKm;
+
+      const totalCostPerKm =
+        fuelCostPerKm +
+        insuranceCostPerKm +
+        ipvaCostPerKm +
+        maintenanceCostPerKm +
+        depreciationCostPerKm;
+
+      custoTotalPorKmCalculado = totalCostPerKm;
+
+      document.getElementById("fuelCostResult").textContent = formatCurrency(fuelCostPerKm);
+      document.getElementById("insuranceCostResult").textContent = formatCurrency(insuranceCostPerKm);
+      document.getElementById("ipvaCostResult").textContent = formatCurrency(ipvaCostPerKm);
+      document.getElementById("maintenanceCostResult").textContent = formatCurrency(maintenanceCostPerKm);
+      document.getElementById("depreciationCostResult").textContent = formatCurrency(depreciationCostPerKm);
+      document.getElementById("totalCostResult").textContent = formatCurrency(totalCostPerKm);
+
+      document.getElementById("resultBox").style.display = "block";
+    }
+
+    function calcularLucro() {
+      esconderErro("dailyErrorMessage");
+
+      const dailyGross = getInputValue("dailyGross");
+      const dailyKm = getInputValue("dailyKm");
+      const dailyExtraExpenses = getInputValue("dailyExtraExpenses");
+
+      if (custoTotalPorKmCalculado <= 0) {
+        mostrarErro(
+          "dailyErrorMessage",
+          "Calcule primeiro o custo real por km antes de calcular o lucro líquido do dia."
+        );
+        document.getElementById("dailyResultBox").style.display = "none";
+        return;
+      }
+
+      if (dailyGross <= 0 || dailyKm <= 0) {
+        mostrarErro(
+          "dailyErrorMessage",
+          "Preencha corretamente o ganho bruto do dia e os km rodados no dia."
+        );
+        document.getElementById("dailyResultBox").style.display = "none";
+        return;
+      }
+
+      const dailyOperationalCost = custoTotalPorKmCalculado * dailyKm;
+      const dailyTotalCost = dailyOperationalCost + dailyExtraExpenses;
+      const dailyProfit = dailyGross - dailyTotalCost;
+
+      document.getElementById("dailyGrossResult").textContent = formatCurrency(dailyGross);
+      document.getElementById("dailyOperationalCostResult").textContent = formatCurrency(dailyOperationalCost);
+      document.getElementById("dailyExtraExpensesResult").textContent = formatCurrency(dailyExtraExpenses);
+      document.getElementById("dailyTotalCostResult").textContent = formatCurrency(dailyTotalCost);
+      document.getElementById("dailyCostPerKmUsed").textContent = formatCurrency(custoTotalPorKmCalculado);
+
+      const dailyProfitEl = document.getElementById("dailyProfitResult");
+      dailyProfitEl.textContent = formatCurrency(dailyProfit);
+      dailyProfitEl.classList.remove("profit-positive", "profit-negative");
+      dailyProfitEl.classList.add(dailyProfit >= 0 ? "profit-positive" : "profit-negative");
+
+      document.getElementById("dailyResultBox").style.display = "block";
+    }
+
+    function limparCampos() {
+      const ids = [
+        "fuelPrice",
+        "kmPerLiter",
+        "monthlyKm",
+        "annualInsurance",
+        "annualIpva",
+        "monthlyMaintenance",
+        "carValue",
+        "dailyGross",
+        "dailyKm",
+        "dailyExtraExpenses"
+      ];
+
+      ids.forEach(id => {
+        document.getElementById(id).value = "";
+      });
+
+      document.getElementById("resultBox").style.display = "none";
+      document.getElementById("dailyResultBox").style.display = "none";
+
+      esconderErro("errorMessage");
+      esconderErro("dailyErrorMessage");
+
+      custoTotalPorKmCalculado = 0;
+    }
+  </script>
+</body>
+</html>
