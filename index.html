@@ -1,920 +1,237 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculadora de Lucro Real do Motorista</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Lucro Real do Motorista</title>
 
-    body {
-      background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
-      color: #e5e7eb;
-      padding: 20px;
-    }
+<style>
+body{
+font-family: Arial;
+background:#0f172a;
+color:white;
+padding:20px;
+}
 
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-    }
+.container{
+max-width:800px;
+margin:auto;
+}
 
-    .hero {
-      background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 22px;
-      padding: 28px;
-      margin-bottom: 24px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-    }
+input{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+border-radius:8px;
+border:none;
+}
 
-    .brand {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.08);
-      color: #93c5fd;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 14px;
-    }
+button{
+padding:12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin-top:10px;
+}
 
-    h1 {
-      font-size: 34px;
-      line-height: 1.15;
-      margin-bottom: 10px;
-      color: #f9fafb;
-    }
+.primary{
+background:#2563eb;
+color:white;
+}
 
-    .hero p {
-      color: #cbd5e1;
-      line-height: 1.6;
-      max-width: 760px;
-    }
+.green{
+background:#16a34a;
+color:white;
+}
 
-    .section {
-      background: #ffffff;
-      color: #111827;
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 22px;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
-    }
+.result{
+background:white;
+color:black;
+padding:20px;
+border-radius:12px;
+margin-top:20px;
+}
 
-    .section-header {
-      margin-bottom: 18px;
-    }
-
-    .section-title {
-      font-size: 25px;
-      margin-bottom: 6px;
-      color: #111827;
-    }
-
-    .section-subtitle {
-      color: #6b7280;
-      line-height: 1.5;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .form-group {
-      margin-bottom: 6px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-weight: bold;
-      color: #111827;
-    }
-
-    input {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid #d1d5db;
-      border-radius: 12px;
-      font-size: 16px;
-      background: #f9fafb;
-      color: #111827;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #2563eb;
-      background: #fff;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 18px;
-    }
-
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-    }
-
-    button:hover {
-      opacity: 0.95;
-      transform: translateY(-1px);
-    }
-
-    .btn-primary {
-      background: #2563eb;
-      color: white;
-      flex: 1;
-      min-width: 220px;
-    }
-
-    .btn-secondary {
-      background: #111827;
-      color: white;
-      flex: 1;
-      min-width: 180px;
-    }
-
-    .btn-light {
-      background: #e5e7eb;
-      color: #111827;
-      flex: 1;
-      min-width: 160px;
-    }
-
-    .btn-success {
-      background: #16a34a;
-      color: white;
-      flex: 1;
-      min-width: 220px;
-    }
-
-    .error {
-      display: none;
-      margin-top: 14px;
-      color: #b91c1c;
-      font-weight: bold;
-    }
-
-    .success-message {
-      display: none;
-      margin-top: 14px;
-      color: #166534;
-      font-weight: bold;
-    }
-
-    .result {
-      display: none;
-      margin-top: 20px;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
-      border-radius: 18px;
-      padding: 20px;
-    }
-
-    .result.visible {
-      display: block;
-    }
-
-    .result h3 {
-      font-size: 23px;
-      margin-bottom: 16px;
-      color: #111827;
-    }
-
-    .result-item {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 11px 0;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .result-item:last-child {
-      border-bottom: none;
-    }
-
-    .highlight {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      margin-top: 18px;
-      padding-top: 16px;
-      border-top: 2px solid #cbd5e1;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .profit-positive {
-      color: #15803d;
-    }
-
-    .profit-negative {
-      color: #b91c1c;
-    }
-
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .metric-card {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 18px;
-    }
-
-    .metric-card span {
-      display: block;
-      font-size: 14px;
-      color: #6b7280;
-      margin-bottom: 8px;
-    }
-
-    .metric-card strong {
-      font-size: 24px;
-      color: #111827;
-    }
-
-    .classification-box {
-      margin-top: 18px;
-      padding: 16px;
-      border-radius: 16px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 20px;
-      border: 1px solid #dbeafe;
-      background: #eff6ff;
-      color: #1d4ed8;
-    }
-
-    .info-box {
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 14px;
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      color: #1e3a8a;
-      line-height: 1.5;
-      font-size: 14px;
-    }
-
-    .chart-card {
-      margin-top: 18px;
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .chart-card h4 {
-      margin-bottom: 12px;
-      color: #111827;
-      font-size: 18px;
-    }
-
-    .chart-wrap {
-      position: relative;
-      width: 100%;
-      height: 320px;
-    }
-
-    .share-box {
-      margin-top: 18px;
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 18px;
-    }
-
-    .share-box h4 {
-      margin-bottom: 10px;
-      font-size: 18px;
-      color: #111827;
-    }
-
-    .share-box p {
-      color: #4b5563;
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-
-    .footer-note {
-      text-align: center;
-      color: #94a3b8;
-      font-size: 14px;
-      padding: 6px 0 20px;
-    }
-
-    @media (max-width: 860px) {
-      .form-grid,
-      .metrics-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 14px;
-      }
-
-      .hero,
-      .section {
-        padding: 18px;
-      }
-
-      h1 {
-        font-size: 28px;
-      }
-
-      .section-title {
-        font-size: 22px;
-      }
-
-      .result-item,
-      .highlight {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
-  </style>
+.share{
+margin-top:20px;
+}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="hero">
-      <div class="brand">por @danielnovolante</div>
-      <h1>Calculadora de Lucro Real do Motorista</h1>
-      <p>
-        Descubra quanto realmente sobra no seu bolso depois dos custos do carro.
-        Chega de olhar só o bruto e achar que o dia foi bom.
-      </p>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">1) Custo real por km</div>
-        <div class="section-subtitle">
-          Preencha os dados do carro para calcular o custo real por km com combustível, seguro, IPVA, manutenção e depreciação.
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="fuelPrice">Preço do combustível (R$ por litro)</label>
-          <input type="number" id="fuelPrice" placeholder="Ex: 6.19" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="kmPerLiter">Consumo do carro (km por litro)</label>
-          <input type="number" id="kmPerLiter" placeholder="Ex: 11" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="monthlyKm">Km rodados por mês</label>
-          <input type="number" id="monthlyKm" placeholder="Ex: 5000" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="annualInsurance">Valor anual do seguro (R$)</label>
-          <input type="number" id="annualInsurance" placeholder="Ex: 2800" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="annualIpva">Valor anual do IPVA (R$)</label>
-          <input type="number" id="annualIpva" placeholder="Ex: 1600" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="monthlyMaintenance">Média de manutenção mensal (R$)</label>
-          <input type="number" id="monthlyMaintenance" placeholder="Ex: 250" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="carValue">Valor atual do carro (R$)</label>
-          <input type="number" id="carValue" placeholder="Ex: 38000" step="0.01" min="0" />
-        </div>
-      </div>
-
-      <div class="buttons">
-        <button class="btn-primary" onclick="calcularCusto()">Calcular custo real por km</button>
-        <button class="btn-secondary" onclick="preencherExemplo()">Preencher exemplo</button>
-      </div>
-
-      <div class="error" id="errorMessage"></div>
-
-      <div class="result" id="costResultBox">
-        <h3>Seu custo real por km</h3>
-
-        <div class="result-item">
-          <span>Combustível por km</span>
-          <strong id="fuelCostResult">R$ 0,00</strong>
-        </div>
-
-        <div class="result-item">
-          <span>Seguro por km</span>
-          <strong id="insuranceCostResult">R$ 0,00</strong>
-        </div>
-
-        <div class="result-item">
-          <span>IPVA por km</span>
-          <strong id="ipvaCostResult">R$ 0,00</strong>
-        </div>
-
-        <div class="result-item">
-          <span>Manutenção por km</span>
-          <strong id="maintenanceCostResult">R$ 0,00</strong>
-        </div>
-
-        <div class="result-item">
-          <span>Depreciação por km</span>
-          <strong id="depreciationCostResult">R$ 0,00</strong>
-        </div>
-
-        <div class="highlight">
-          <span>Custo real total por km</span>
-          <span id="totalCostResult">R$ 0,00</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">2) Resultado real do dia</div>
-        <div class="section-subtitle">
-          Agora veja quanto realmente sobrou depois dos custos do carro.
-        </div>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label for="dailyGross">Ganho bruto do dia (R$)</label>
-          <input type="number" id="dailyGross" placeholder="Ex: 320" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="dailyKm">Km rodados no dia</label>
-          <input type="number" id="dailyKm" placeholder="Ex: 180" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="dailyExtraExpenses">Gastos extras do dia (R$)</label>
-          <input type="number" id="dailyExtraExpenses" placeholder="Ex: 15" step="0.01" min="0" />
-        </div>
-
-        <div class="form-group">
-          <label for="workedHours">Horas trabalhadas no dia</label>
-          <input type="number" id="workedHours" placeholder="Ex: 8" step="0.01" min="0" />
-        </div>
-      </div>
-
-      <div class="info-box">
-        Em “gastos extras”, use apenas despesas fora do custo por km, como pedágio, estacionamento, lavagem ou alimentação.
-        Não coloque combustível aqui se ele já estiver entrando no custo real por km.
-      </div>
-
-      <div class="buttons">
-        <button class="btn-primary" onclick="calcularLucro()">Calcular lucro real do dia</button>
-        <button class="btn-light" onclick="limparCampos()">Limpar</button>
-      </div>
-
-      <div class="error" id="dailyErrorMessage"></div>
-      <div class="success-message" id="shareSuccessMessage"></div>
-
-      <div class="result" id="dailyResultBox">
-        <h3>Resultado real do seu dia</h3>
-
-        <div class="result-item">
-          <span>Ganho bruto do dia</span>
-          <strong id="dailyGrossResult">R$ 0,00</strong>
-        </div>
-
-        <div class="result-item">
-          <span>Custo operacional do dia</span>
-          <strong id="dailyOperationalCostResult">R$ 0,00</strong>
-        </div>
-
-        <div class="result-item">
-          <span>Gastos extras do dia</span>
-          <strong id="dailyExtraExpensesResult">R$ 0,00</strong>
-        </div>
-
-        <div class="result-item">
-          <span>Custo total do dia</span>
-          <strong id="dailyTotalCostResult">R$ 0,00</strong>
-        </div>
-
-        <div class="highlight">
-          <span>Lucro líquido do dia</span>
-          <span id="dailyProfitResult">R$ 0,00</span>
-        </div>
-
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <span>Lucro líquido por hora</span>
-            <strong id="profitPerHourResult">R$ 0,00</strong>
-          </div>
-
-          <div class="metric-card">
-            <span>Lucro líquido por km</span>
-            <strong id="profitPerKmResult">R$ 0,00</strong>
-          </div>
-
-          <div class="metric-card">
-            <span>Margem líquida</span>
-            <strong id="netMarginResult">0%</strong>
-          </div>
-        </div>
-
-        <div class="classification-box" id="classificationBox">
-          Classificação do dia: —
-        </div>
-
-        <div class="chart-card">
-          <h4>Resumo do dia</h4>
-          <div class="chart-wrap">
-            <canvas id="dailyChart"></canvas>
-          </div>
-        </div>
-
-        <div class="share-box">
-          <h4>Compartilhe seu resultado</h4>
-          <p>
-            Mostre para outros motoristas quanto realmente sobrou no seu dia e envie sua calculadora pelo WhatsApp, e-mail ou outro app.
-          </p>
-
-          <div class="buttons">
-            <button class="btn-success" onclick="compartilharResultado()">Compartilhar meu resultado</button>
-            <button class="btn-secondary" onclick="compartilharNoWhatsApp()">Enviar no WhatsApp</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-note">
-      Ferramenta criada para ajudar motoristas a entenderem o lucro real do dia.
-    </div>
-  </div>
-
-  <script>
-    let custoTotalPorKmCalculado = 0;
-    let dailyChartInstance = null;
-
-    let ultimoResultado = {
-      dailyProfit: 0,
-      profitPerHour: 0,
-      profitPerKm: 0,
-      classification: "",
-      dailyGross: 0,
-      dailyTotalCost: 0
-    };
-
-    const SITE_URL = "https://danielmartins-dev.github.io/calculadora-motorista-pro/";
-
-    function formatCurrency(value) {
-      return Number(value).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      });
-    }
-
-    function formatPercent(value) {
-      return `${Number(value).toFixed(1).replace(".", ",")}%`;
-    }
-
-    function getInputValue(id) {
-      return parseFloat(document.getElementById(id).value) || 0;
-    }
-
-    function mostrarErro(id, mensagem) {
-      const el = document.getElementById(id);
-      el.style.display = "block";
-      el.textContent = mensagem;
-    }
-
-    function esconderErro(id) {
-      const el = document.getElementById(id);
-      el.style.display = "none";
-      el.textContent = "";
-    }
-
-    function mostrarSucesso(mensagem) {
-      const el = document.getElementById("shareSuccessMessage");
-      el.style.display = "block";
-      el.textContent = mensagem;
-
-      setTimeout(() => {
-        el.style.display = "none";
-        el.textContent = "";
-      }, 3000);
-    }
-
-    function preencherExemplo() {
-      document.getElementById("fuelPrice").value = "6.19";
-      document.getElementById("kmPerLiter").value = "11";
-      document.getElementById("monthlyKm").value = "5000";
-      document.getElementById("annualInsurance").value = "2800";
-      document.getElementById("annualIpva").value = "1600";
-      document.getElementById("monthlyMaintenance").value = "250";
-      document.getElementById("carValue").value = "38000";
-
-      document.getElementById("dailyGross").value = "320";
-      document.getElementById("dailyKm").value = "180";
-      document.getElementById("dailyExtraExpenses").value = "15";
-      document.getElementById("workedHours").value = "8";
-    }
-
-    function calcularCusto() {
-      esconderErro("errorMessage");
-
-      const fuelPrice = getInputValue("fuelPrice");
-      const kmPerLiter = getInputValue("kmPerLiter");
-      const monthlyKm = getInputValue("monthlyKm");
-      const annualInsurance = getInputValue("annualInsurance");
-      const annualIpva = getInputValue("annualIpva");
-      const monthlyMaintenance = getInputValue("monthlyMaintenance");
-      const carValue = getInputValue("carValue");
-
-      if (fuelPrice <= 0 || kmPerLiter <= 0 || monthlyKm <= 0 || carValue <= 0) {
-        mostrarErro(
-          "errorMessage",
-          "Preencha corretamente combustível, consumo, km por mês e valor do carro."
-        );
-        document.getElementById("costResultBox").classList.remove("visible");
-        custoTotalPorKmCalculado = 0;
-        return;
-      }
-
-      const annualKm = monthlyKm * 12;
-
-      const fuelCostPerKm = fuelPrice / kmPerLiter;
-      const insuranceCostPerKm = annualInsurance / annualKm;
-      const ipvaCostPerKm = annualIpva / annualKm;
-      const maintenanceCostPerKm = monthlyMaintenance / monthlyKm;
-      const annualDepreciation = carValue * 0.20;
-      const depreciationCostPerKm = annualDepreciation / annualKm;
-
-      const totalCostPerKm =
-        fuelCostPerKm +
-        insuranceCostPerKm +
-        ipvaCostPerKm +
-        maintenanceCostPerKm +
-        depreciationCostPerKm;
-
-      custoTotalPorKmCalculado = totalCostPerKm;
-
-      document.getElementById("fuelCostResult").textContent = formatCurrency(fuelCostPerKm);
-      document.getElementById("insuranceCostResult").textContent = formatCurrency(insuranceCostPerKm);
-      document.getElementById("ipvaCostResult").textContent = formatCurrency(ipvaCostPerKm);
-      document.getElementById("maintenanceCostResult").textContent = formatCurrency(maintenanceCostPerKm);
-      document.getElementById("depreciationCostResult").textContent = formatCurrency(depreciationCostPerKm);
-      document.getElementById("totalCostResult").textContent = formatCurrency(totalCostPerKm);
-
-      document.getElementById("costResultBox").classList.add("visible");
-    }
-
-    function classificarDia(dailyProfit, profitPerHour, profitPerKm) {
-      if (dailyProfit < 0) return "Prejuízo";
-
-      let nivel = 0;
-
-      if (profitPerHour < 20) {
-        nivel = 1;
-      } else if (profitPerHour < 30) {
-        nivel = 2;
-      } else if (profitPerHour < 40) {
-        nivel = 3;
-      } else {
-        nivel = 4;
-      }
-
-      if (profitPerKm < 0.60) {
-        nivel = Math.max(1, nivel - 1);
-      }
-
-      const classificacoes = {
-        1: "Fraco",
-        2: "Razoável",
-        3: "Bom",
-        4: "Excelente"
-      };
-
-      return classificacoes[nivel];
-    }
-
-    function renderDailyChart(dailyGross, dailyTotalCost, dailyProfit) {
-      const ctx = document.getElementById("dailyChart").getContext("2d");
-
-      if (dailyChartInstance) {
-        dailyChartInstance.destroy();
-      }
-
-      dailyChartInstance = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: ["Ganho bruto", "Custo total", "Lucro líquido"],
-          datasets: [{
-            label: "Resumo do dia",
-            data: [dailyGross, dailyTotalCost, dailyProfit]
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          },
-          plugins: {
-            legend: {
-              display: false
-            }
-          }
-        }
-      });
-    }
-
-    function gerarTextoCompartilhamento() {
-      return `Hoje calculei meu lucro real como motorista de app.%0A%0A` +
-        `Lucro líquido: ${encodeURIComponent(formatCurrency(ultimoResultado.dailyProfit))}%0A` +
-        `Lucro por hora: ${encodeURIComponent(formatCurrency(ultimoResultado.profitPerHour))}%0A` +
-        `Lucro por km: ${encodeURIComponent(formatCurrency(ultimoResultado.profitPerKm))}%0A` +
-        `Classificação do dia: ${encodeURIComponent(ultimoResultado.classification)}%0A%0A` +
-        `Fiz nessa calculadora gratuita:%0A${encodeURIComponent(SITE_URL)}`;
-    }
-
-    function gerarTextoCompartilhamentoNormal() {
-      return `Hoje calculei meu lucro real como motorista de app.\n\n` +
-        `Lucro líquido: ${formatCurrency(ultimoResultado.dailyProfit)}\n` +
-        `Lucro por hora: ${formatCurrency(ultimoResultado.profitPerHour)}\n` +
-        `Lucro por km: ${formatCurrency(ultimoResultado.profitPerKm)}\n` +
-        `Classificação do dia: ${ultimoResultado.classification}\n\n` +
-        `Fiz nessa calculadora gratuita:\n${SITE_URL}`;
-    }
-
-    async function compartilharResultado() {
-      if (!ultimoResultado.classification) {
-        mostrarErro("dailyErrorMessage", "Calcule o resultado do dia antes de compartilhar.");
-        return;
-      }
-
-      const shareText = gerarTextoCompartilhamentoNormal();
-
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: "Meu resultado como motorista de app",
-            text: shareText,
-            url: SITE_URL
-          });
-          return;
-        } catch (error) {
-        }
-      }
-
-      try {
-        await navigator.clipboard.writeText(shareText);
-        mostrarSucesso("Texto copiado! Agora é só colar onde quiser.");
-      } catch (error) {
-        mostrarErro("dailyErrorMessage", "Não foi possível compartilhar agora. Tente copiar manualmente.");
-      }
-    }
-
-    function compartilharNoWhatsApp() {
-      if (!ultimoResultado.classification) {
-        mostrarErro("dailyErrorMessage", "Calcule o resultado do dia antes de compartilhar.");
-        return;
-      }
-
-      const texto = gerarTextoCompartilhamento();
-      const urlWhatsApp = `https://wa.me/?text=${texto}`;
-      window.open(urlWhatsApp, "_blank");
-    }
-
-    function calcularLucro() {
-      esconderErro("dailyErrorMessage");
-      esconderErro("shareSuccessMessage");
-
-      const dailyGross = getInputValue("dailyGross");
-      const dailyKm = getInputValue("dailyKm");
-      const dailyExtraExpenses = getInputValue("dailyExtraExpenses");
-      const workedHours = getInputValue("workedHours");
-
-      if (custoTotalPorKmCalculado <= 0) {
-        mostrarErro(
-          "dailyErrorMessage",
-          "Calcule primeiro o custo real por km antes de calcular o lucro do dia."
-        );
-        document.getElementById("dailyResultBox").classList.remove("visible");
-        return;
-      }
-
-      if (dailyGross <= 0 || dailyKm <= 0 || workedHours <= 0) {
-        mostrarErro(
-          "dailyErrorMessage",
-          "Preencha corretamente ganho bruto, km rodados e horas trabalhadas."
-        );
-        document.getElementById("dailyResultBox").classList.remove("visible");
-        return;
-      }
-
-      const dailyOperationalCost = custoTotalPorKmCalculado * dailyKm;
-      const dailyTotalCost = dailyOperationalCost + dailyExtraExpenses;
-      const dailyProfit = dailyGross - dailyTotalCost;
-
-      const profitPerHour = dailyProfit / workedHours;
-      const profitPerKm = dailyProfit / dailyKm;
-      const netMargin = (dailyProfit / dailyGross) * 100;
-      const classificacao = classificarDia(dailyProfit, profitPerHour, profitPerKm);
-
-      ultimoResultado = {
-        dailyProfit,
-        profitPerHour,
-        profitPerKm,
-        classification: classificacao,
-        dailyGross,
-        dailyTotalCost
-      };
-
-      document.getElementById("dailyGrossResult").textContent = formatCurrency(dailyGross);
-      document.getElementById("dailyOperationalCostResult").textContent = formatCurrency(dailyOperationalCost);
-      document.getElementById("dailyExtraExpensesResult").textContent = formatCurrency(dailyExtraExpenses);
-      document.getElementById("dailyTotalCostResult").textContent = formatCurrency(dailyTotalCost);
-
-      const dailyProfitEl = document.getElementById("dailyProfitResult");
-      dailyProfitEl.textContent = formatCurrency(dailyProfit);
-      dailyProfitEl.classList.remove("profit-positive", "profit-negative");
-      dailyProfitEl.classList.add(dailyProfit >= 0 ? "profit-positive" : "profit-negative");
-
-      document.getElementById("profitPerHourResult").textContent = formatCurrency(profitPerHour);
-      document.getElementById("profitPerKmResult").textContent = formatCurrency(profitPerKm);
-      document.getElementById("netMarginResult").textContent = formatPercent(netMargin);
-      document.getElementById("classificationBox").textContent = `Classificação do dia: ${classificacao}`;
-
-      document.getElementById("dailyResultBox").classList.add("visible");
-
-      renderDailyChart(dailyGross, dailyTotalCost, dailyProfit);
-    }
-
-    function limparCampos() {
-      const ids = [
-        "fuelPrice",
-        "kmPerLiter",
-        "monthlyKm",
-        "annualInsurance",
-        "annualIpva",
-        "monthlyMaintenance",
-        "carValue",
-        "dailyGross",
-        "dailyKm",
-        "dailyExtraExpenses",
-        "workedHours"
-      ];
-
-      ids.forEach(id => {
-        document.getElementById(id).value = "";
-      });
-
-      document.getElementById("costResultBox").classList.remove("visible");
-      document.getElementById("dailyResultBox").classList.remove("visible");
-
-      esconderErro("errorMessage");
-      esconderErro("dailyErrorMessage");
-      esconderErro("shareSuccessMessage");
-
-      custoTotalPorKmCalculado = 0;
-      ultimoResultado = {
-        dailyProfit: 0,
-        profitPerHour: 0,
-        profitPerKm: 0,
-        classification: "",
-        dailyGross: 0,
-        dailyTotalCost: 0
-      };
-
-      if (dailyChartInstance) {
-        dailyChartInstance.destroy();
-        dailyChartInstance = null;
-      }
-    }
-  </script>
+
+<div class="container">
+
+<h1>Calculadora de Lucro Real do Motorista</h1>
+<p>por @danielnovolante</p>
+
+<h3>Custos do carro</h3>
+
+<input id="fuelPrice" placeholder="Preço do combustível (ex: 6.19)">
+<input id="kmPerLiter" placeholder="Consumo km/l (ex: 11)">
+<input id="monthlyKm" placeholder="Km rodados por mês">
+<input id="insurance" placeholder="Seguro anual">
+<input id="ipva" placeholder="IPVA anual">
+<input id="maintenance" placeholder="Manutenção mensal">
+<input id="carValue" placeholder="Valor do carro">
+
+<button class="primary" onclick="calcularCusto()">Calcular custo por km</button>
+
+<h3 style="margin-top:40px">Resultado do dia</h3>
+
+<input id="gross" placeholder="Ganho bruto do dia">
+<input id="kmDay" placeholder="Km rodados no dia">
+<input id="hours" placeholder="Horas trabalhadas">
+<input id="extra" placeholder="Gastos extras">
+
+<button class="primary" onclick="calcularLucro()">Calcular resultado</button>
+
+<div id="resultado" class="result" style="display:none">
+
+<h2>Resultado do dia</h2>
+
+<p>Lucro líquido: <b id="lucro"></b></p>
+<p>Lucro por hora: <b id="hora"></b></p>
+<p>Lucro por km: <b id="km"></b></p>
+<p>Classificação: <b id="classificacao"></b></p>
+
+<div class="share">
+
+<button class="green" onclick="compartilhar()">Compartilhar meu resultado</button>
+
+<button onclick="whatsapp()">Enviar no WhatsApp</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let custoKm = 0
+let ultimoResultado = {}
+
+const SITE = "https://danielmartins-dev.github.io/calculadora-motorista-pro/"
+
+function moeda(v){
+return Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})
+}
+
+function calcularCusto(){
+
+let fuel = Number(fuelPrice.value)
+let consumo = Number(kmPerLiter.value)
+let kmMes = Number(monthlyKm.value)
+
+let seguro = Number(insurance.value)
+let ipvaV = Number(ipva.value)
+let manut = Number(maintenance.value)
+let carro = Number(carValue.value)
+
+let kmAno = kmMes * 12
+
+let combustivel = fuel/consumo
+let seguroKm = seguro/kmAno
+let ipvaKm = ipvaV/kmAno
+let manutKm = manut/kmMes
+let depreciacao = (carro*0.20)/kmAno
+
+custoKm = combustivel + seguroKm + ipvaKm + manutKm + depreciacao
+
+alert("Custo por km: "+moeda(custoKm))
+
+}
+
+function classificar(lucroHora){
+
+if(lucroHora<20) return "Fraco"
+if(lucroHora<30) return "Razoável"
+if(lucroHora<40) return "Bom"
+return "Excelente"
+
+}
+
+function calcularLucro(){
+
+let bruto = Number(gross.value)
+let kmRodado = Number(kmDay.value)
+let horas = Number(hours.value)
+let extra = Number(extra.value)
+
+let custoDia = kmRodado*custoKm
+let total = custoDia + extra
+let lucro = bruto-total
+
+let porHora = lucro/horas
+let porKm = lucro/kmRodado
+
+let classe = classificar(porHora)
+
+lucroEl = document.getElementById("lucro")
+horaEl = document.getElementById("hora")
+kmEl = document.getElementById("km")
+classEl = document.getElementById("classificacao")
+
+lucroEl.innerText = moeda(lucro)
+horaEl.innerText = moeda(porHora)
+kmEl.innerText = moeda(porKm)
+classEl.innerText = classe
+
+resultado.style.display="block"
+
+ultimoResultado = {
+lucro,
+porHora,
+porKm,
+classe
+}
+
+}
+
+function textoCompartilhar(){
+
+return `Hoje descobri que sobraram só ${moeda(ultimoResultado.lucro)} no meu bolso rodando de app.
+
+Lucro por hora: ${moeda(ultimoResultado.porHora)}
+Lucro por km: ${moeda(ultimoResultado.porKm)}
+Classificação do dia: ${ultimoResultado.classe}
+
+Calculei aqui:
+${SITE}`
+
+}
+
+function compartilhar(){
+
+let texto = textoCompartilhar()
+
+if(navigator.share){
+
+navigator.share({
+title:"Resultado motorista de app",
+text:texto,
+url:SITE
+})
+
+}else{
+
+navigator.clipboard.writeText(texto)
+alert("Texto copiado para compartilhar!")
+
+}
+
+}
+
+function whatsapp(){
+
+let texto = encodeURIComponent(textoCompartilhar())
+
+window.open(`https://wa.me/?text=${texto}`)
+
+}
+
+</script>
+
 </body>
 </html>
