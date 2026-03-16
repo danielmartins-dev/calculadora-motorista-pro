@@ -6,29 +6,33 @@
 <title>Calculadora de Lucro Real do Motorista</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial}
+
+*{
+box-sizing:border-box;
+font-family:Arial;
+}
 
 body{
 background:#0f172a;
 color:white;
-padding:20px
+padding:20px;
 }
 
 .container{
 max-width:900px;
-margin:auto
+margin:auto;
 }
 
 .hero{
 background:#111827;
 padding:25px;
 border-radius:20px;
-margin-bottom:20px
+margin-bottom:20px;
 }
 
 .brand{
 color:#93c5fd;
-margin-bottom:10px
+margin-bottom:10px;
 }
 
 .section{
@@ -36,19 +40,19 @@ background:white;
 color:black;
 padding:25px;
 border-radius:18px;
-margin-bottom:20px
+margin-bottom:20px;
 }
 
 .form-grid{
 display:grid;
 grid-template-columns:1fr 1fr;
-gap:12px
+gap:12px;
 }
 
 input{
 padding:12px;
 border-radius:10px;
-border:1px solid #ccc
+border:1px solid #ccc;
 }
 
 button{
@@ -56,49 +60,61 @@ padding:14px;
 border-radius:12px;
 border:none;
 cursor:pointer;
-font-weight:bold
+font-weight:bold;
 }
 
-.primary{background:#2563eb;color:white}
-.secondary{background:#111827;color:white}
-.green{background:#16a34a;color:white}
+.primary{
+background:#2563eb;
+color:white;
+}
+
+.secondary{
+background:#111827;
+color:white;
+}
+
+.green{
+background:#16a34a;
+color:white;
+}
 
 .result{
 margin-top:20px;
 background:#f1f5f9;
 padding:20px;
 border-radius:12px;
-display:none
+display:none;
 }
 
 .result-item{
 display:flex;
 justify-content:space-between;
-margin-bottom:8px
+margin-bottom:8px;
 }
 
 .highlight{
 font-size:22px;
 font-weight:bold;
-margin-top:15px
+margin-top:15px;
 }
 
 .metrics{
 display:grid;
 grid-template-columns:1fr 1fr 1fr;
 gap:10px;
-margin-top:15px
+margin-top:15px;
 }
 
 .metric{
 background:white;
 padding:15px;
-border-radius:12px
+border-radius:12px;
 }
 
 .share{
-margin-top:20px
+margin-top:20px;
 }
+
 </style>
 </head>
 
@@ -109,8 +125,9 @@ margin-top:20px
 <div class="hero">
 <div class="brand">por @danielnovolante</div>
 <h1>Calculadora de Lucro Real do Motorista</h1>
-<p>Descubra quanto realmente sobra no seu bolso.</p>
+<p>Descubra quanto realmente sobra no seu bolso rodando de app.</p>
 </div>
+
 
 <div class="section">
 
@@ -165,11 +182,9 @@ margin-top:20px
 <div class="form-grid">
 
 <input id="dailyGross" placeholder="Ganho bruto do dia">
-
 <input id="dailyKm" placeholder="Km rodados no dia">
 
 <input id="extra" placeholder="Gastos extras">
-
 <input id="hours" placeholder="Horas trabalhadas">
 
 </div>
@@ -190,20 +205,17 @@ Lucro líquido: <span id="profitR"></span>
 <div class="metrics">
 
 <div class="metric">
-Lucro/hora
-<br>
+Lucro/hora<br>
 <b id="hourR"></b>
 </div>
 
 <div class="metric">
-Lucro/km
-<br>
+Lucro/km<br>
 <b id="kmR"></b>
 </div>
 
 <div class="metric">
-Classificação
-<br>
+Classificação<br>
 <b id="classR"></b>
 </div>
 
@@ -224,57 +236,67 @@ Classificação
 
 </div>
 
+
 <script>
 
-let custoKm=0
+let custoKm = 0
 
-let resultado={}
+let resultado = {}
 
-const SITE="https://danielmartins-dev.github.io/calculadora-motorista-pro/"
+const SITE = "https://danielmartins-dev.github.io/calculadora-motorista-pro/"
 
 function parse(v){
-return parseFloat(String(v).replace(",","."))||0
+return parseFloat(String(v).replace(",", ".")) || 0
 }
 
 function money(v){
 return Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})
 }
 
+
+
 function calcularCusto(){
 
-let fuel=parse(fuelPrice.value)
-let consumo=parse(kmPerLiter.value)
-let kmMes=parse(monthlyKm.value)
+let precoCombustivel = parse(fuelPrice.value)
+let consumoKmLitro = parse(kmPerLiter.value)
+let kmMes = parse(monthlyKm.value)
 
-let fixo=parse(fixedCost.value)
+let custoFixoMensal = parse(fixedCost.value)
 
-let seguro=parse(annualInsurance.value)
-let ipva=parse(annualIpva.value)
-let manut=parse(maintenance.value)
-let carro=parse(carValue.value)
+let seguroAnual = parse(annualInsurance.value)
+let ipvaAnual = parse(annualIpva.value)
+let manutencaoMensal = parse(maintenance.value)
+let valorCarro = parse(carValue.value)
 
-let kmAno=kmMes*12
+if(precoCombustivel<=0 || consumoKmLitro<=0 || kmMes<=0 || valorCarro<=0){
+alert("Preencha corretamente os dados do carro")
+return
+}
 
-let combustivel=fuel/consumo
-let seguroKm=seguro/kmAno
-let ipvaKm=ipva/kmAno
-let manutKm=manut/kmMes
-let depreciacao=(carro*0.20)/kmAno
-let fixKm=fixo/kmMes
+let kmAno = kmMes * 12
 
-custoKm=combustivel+seguroKm+ipvaKm+manutKm+depreciacao+fixKm
+let combustivelKm = precoCombustivel / consumoKmLitro
+let seguroKm = seguroAnual / kmAno
+let ipvaKm = ipvaAnual / kmAno
+let manutencaoKm = manutencaoMensal / kmMes
+let depreciacaoKm = (valorCarro * 0.20) / kmAno
+let custoFixoKm = custoFixoMensal / kmMes
 
-fuel.innerText=money(combustivel)
-insurance.innerText=money(seguroKm)
-ipva.innerText=money(ipvaKm)
-manut.innerText=money(manutKm)
-depr.innerText=money(depreciacao)
-fix.innerText=money(fixKm)
-total.innerText=money(custoKm)
+custoKm = combustivelKm + seguroKm + ipvaKm + manutencaoKm + depreciacaoKm + custoFixoKm
+
+document.getElementById("fuel").innerText = money(combustivelKm)
+document.getElementById("insurance").innerText = money(seguroKm)
+document.getElementById("ipva").innerText = money(ipvaKm)
+document.getElementById("manut").innerText = money(manutencaoKm)
+document.getElementById("depr").innerText = money(depreciacaoKm)
+document.getElementById("fix").innerText = money(custoFixoKm)
+document.getElementById("total").innerText = money(custoKm)
 
 costResult.style.display="block"
 
 }
+
+
 
 function classificar(hora){
 
@@ -285,32 +307,44 @@ return "Excelente"
 
 }
 
+
+
 function calcularLucro(){
 
-let bruto=parse(dailyGross.value)
-let km=parse(dailyKm.value)
-let extra=parse(extra.value)
-let horas=parse(hours.value)
+let bruto = parse(dailyGross.value)
+let km = parse(dailyKm.value)
+let gastosExtras = parse(document.getElementById("extra").value)
+let horas = parse(hours.value)
 
-let custoDia=km*custoKm+extra
-let lucro=bruto-custoDia
+if(custoKm<=0){
+alert("Calcule primeiro o custo por km")
+return
+}
 
-let lucroHora=lucro/horas
-let lucroKm=lucro/km
+if(bruto<=0 || km<=0 || horas<=0){
+alert("Preencha corretamente os dados do dia")
+return
+}
 
-let classe=classificar(lucroHora)
+let custoDia = km*custoKm + gastosExtras
+let lucro = bruto - custoDia
 
-grossR.innerText=money(bruto)
-costR.innerText=money(custoDia)
-profitR.innerText=money(lucro)
+let lucroHora = lucro/horas
+let lucroKm = lucro/km
 
-hourR.innerText=money(lucroHora)
-kmR.innerText=money(lucroKm)
-classR.innerText=classe
+let classe = classificar(lucroHora)
+
+grossR.innerText = money(bruto)
+costR.innerText = money(custoDia)
+profitR.innerText = money(lucro)
+
+hourR.innerText = money(lucroHora)
+kmR.innerText = money(lucroKm)
+classR.innerText = classe
 
 dailyResult.style.display="block"
 
-resultado={
+resultado = {
 lucro,
 lucroHora,
 lucroKm,
@@ -318,6 +352,8 @@ classe
 }
 
 }
+
+
 
 function texto(){
 
@@ -332,13 +368,18 @@ ${SITE}`
 
 }
 
+
+
 function share(){
 
-let t=texto()
+let t = texto()
 
 if(navigator.share){
 
-navigator.share({text:t,url:SITE})
+navigator.share({
+text:t,
+url:SITE
+})
 
 }else{
 
@@ -349,9 +390,11 @@ alert("Texto copiado para compartilhar!")
 
 }
 
+
+
 function whatsapp(){
 
-let t=encodeURIComponent(texto())
+let t = encodeURIComponent(texto())
 
 window.open(`https://wa.me/?text=${t}`)
 
