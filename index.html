@@ -545,6 +545,7 @@ function calcularCusto() {
   const ipvaAnual = parse(get("annualIpva").value)
   const manutencao = parse(get("maintenance").value)
   const valorCarro = parse(get("carValue").value)
+  
  
   if (!validar(precoCombustivel, "Preço do combustível")) return
   if (!validar(consumo, "Consumo km/l")) return
@@ -573,7 +574,7 @@ function calcularCusto() {
   get("costResult").classList.add("visible")
   get("badge1").textContent = "✓"
   get("badge1").classList.add("done")
- 
+ gtag('event', 'calcular_custo')
   // FIX: salva no estado e invalida resultado do dia anterior
   estado.custoKm = total
   invalidarResultadoDia()
@@ -635,6 +636,7 @@ function calcularLucro() {
   get("dailyResult").classList.add("visible")
   get("badge2").textContent = "✓"
   get("badge2").classList.add("done")
+  gtag('event', 'calcular_resultado')
  
   estado.resultado = { lucro, lucroHora, lucroKm, classe: classe.label }
 }
@@ -687,13 +689,16 @@ function share() {
   } else {
     navigator.clipboard.writeText(t)
     alert("Texto copiado! Cole onde quiser.")
+    gtag('event', 'compartilhar')
   }
 }
  
 function whatsapp() {
   if (!estado.resultado) return
   window.open("https://wa.me/?text=" + encodeURIComponent(texto()))
+  gtag('event', 'whatsapp')
 }
+
  
 // Mostra aviso de bloqueio ao tentar usar seção 2 antes da 1
 get("card2").addEventListener("click", function() {
