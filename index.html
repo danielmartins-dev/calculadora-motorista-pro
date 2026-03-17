@@ -2,18 +2,19 @@
 <html lang="pt-BR">
 <head>
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z2JL7YWF4F"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z2JL7YWF4F"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-Z2JL7YWF4F');
-</script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Lucro Real do Motorista</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+    gtag('config', 'G-Z2JL7YWF4F');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Lucro Real do Motorista</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
  
 <style>
 :root {
@@ -530,7 +531,7 @@ function get(id) {
  
 function validar(valor, nome) {
   if (valor <= 0) {
-    alert("O campo \"" + nome + "\" precisa ser um valor positivo.")
+    alert('O campo "' + nome + '" precisa ser um valor positivo.')
     return false
   }
   return true
@@ -546,7 +547,6 @@ function calcularCusto() {
   const manutencao = parse(get("maintenance").value)
   const valorCarro = parse(get("carValue").value)
   
- 
   if (!validar(precoCombustivel, "Preço do combustível")) return
   if (!validar(consumo, "Consumo km/l")) return
   if (!validar(kmMes, "Km por mês")) return
@@ -554,47 +554,48 @@ function calcularCusto() {
  
   const kmAno = kmMes * 12
  
-  const combustivelKm   = precoCombustivel / consumo
-  const seguroKm        = seguroAnual / kmAno
-  const ipvaKm          = ipvaAnual / kmAno
-  const manutencaoKm    = manutencao / kmMes
-  const depreciacaoKm   = (valorCarro * 0.20) / kmAno
-  const custoFixoKm     = custoFixo > 0 ? custoFixo / kmMes : 0
+  const combustivelKm = precoCombustivel / consumo
+  const seguroKm = seguroAnual / kmAno
+  const ipvaKm = ipvaAnual / kmAno
+  const manutencaoKm = manutencao / kmMes
+  const depreciacaoKm = (valorCarro * 0.20) / kmAno
+  const custoFixoKm = custoFixo > 0 ? custoFixo / kmMes : 0
  
   const total = combustivelKm + seguroKm + ipvaKm + manutencaoKm + depreciacaoKm + custoFixoKm
  
-  get("fuel").textContent      = money(combustivelKm)
+  get("fuel").textContent = money(combustivelKm)
   get("insurance").textContent = money(seguroKm)
-  get("ipva").textContent      = money(ipvaKm)
-  get("manut").textContent     = money(manutencaoKm)
-  get("depr").textContent      = money(depreciacaoKm)
-  get("fix").textContent       = money(custoFixoKm)
-  get("total").textContent     = money(total)
+  get("ipva").textContent = money(ipvaKm)
+  get("manut").textContent = money(manutencaoKm)
+  get("depr").textContent = money(depreciacaoKm)
+  get("fix").textContent = money(custoFixoKm)
+  get("total").textContent = money(total)
  
   get("costResult").classList.add("visible")
   get("badge1").textContent = "✓"
   get("badge1").classList.add("done")
- gtag('event', 'calcular_custo')
-  // FIX: salva no estado e invalida resultado do dia anterior
+
   estado.custoKm = total
   invalidarResultadoDia()
  
-  // Libera seção 2
   get("card2").classList.remove("locked")
   get("lockNotice").classList.remove("visible")
+
+  if (typeof gtag === 'function') {
+    gtag('event', 'calcular_custo')
+  }
 }
  
-// FIX: esconde resultado do dia quando custo muda
 function invalidarResultadoDia() {
   get("dailyResult").classList.remove("visible")
   estado.resultado = null
 }
  
 function classificar(hora) {
-  if (hora < 20) return { label: "Fraco",     cls: "fraco" }
-  if (hora < 30) return { label: "Razoável",  cls: "razoavel" }
-  if (hora < 40) return { label: "Bom",       cls: "bom" }
-  return             { label: "Excelente", cls: "excelente" }
+  if (hora < 20) return { label: "Fraco", cls: "fraco" }
+  if (hora < 30) return { label: "Razoável", cls: "razoavel" }
+  if (hora < 40) return { label: "Bom", cls: "bom" }
+  return { label: "Excelente", cls: "excelente" }
 }
  
 function calcularLucro() {
@@ -604,30 +605,30 @@ function calcularLucro() {
     return
   }
  
-  const bruto  = parse(get("dailyGross").value)
-  const km     = parse(get("dailyKm").value)
+  const bruto = parse(get("dailyGross").value)
+  const km = parse(get("dailyKm").value)
   const extras = parse(get("extra").value)
-  const horas  = parse(get("hours").value)
+  const horas = parse(get("hours").value)
  
   if (!validar(bruto, "Ganho bruto do dia")) return
-  if (!validar(km,    "Km rodados no dia"))  return
-  if (!validar(horas, "Horas trabalhadas"))  return
+  if (!validar(km, "Km rodados no dia")) return
+  if (!validar(horas, "Horas trabalhadas")) return
  
-  const custoDia  = km * estado.custoKm + extras
-  const lucro     = bruto - custoDia
+  const custoDia = km * estado.custoKm + extras
+  const lucro = bruto - custoDia
   const lucroHora = lucro / horas
-  const lucroKm   = lucro / km
-  const classe    = classificar(lucroHora)
+  const lucroKm = lucro / km
+  const classe = classificar(lucroHora)
  
   get("grossR").textContent = money(bruto)
-  get("costR").textContent  = money(custoDia)
+  get("costR").textContent = money(custoDia)
  
   const profitEl = get("profitR")
   profitEl.textContent = money(lucro)
   profitEl.className = "value " + (lucro >= 0 ? "positive" : "negative")
  
   get("hourR").textContent = money(lucroHora)
-  get("kmR").textContent   = money(lucroKm)
+  get("kmR").textContent = money(lucroKm)
  
   const classEl = get("classR")
   classEl.textContent = classe.label
@@ -636,29 +637,27 @@ function calcularLucro() {
   get("dailyResult").classList.add("visible")
   get("badge2").textContent = "✓"
   get("badge2").classList.add("done")
-  gtag('event', 'calcular_resultado')
  
   estado.resultado = { lucro, lucroHora, lucroKm, classe: classe.label }
+
+  if (typeof gtag === 'function') {
+    gtag('event', 'calcular_resultado')
+  }
 }
  
 function resetar() {
   if (!confirm("Limpar todos os campos e começar de novo?")) return
  
-  // Limpa inputs
   document.querySelectorAll("input").forEach(i => i.value = "")
  
-  // Reseta estado
   estado = { custoKm: null, resultado: null }
  
-  // Esconde resultados
   get("costResult").classList.remove("visible")
   get("dailyResult").classList.remove("visible")
  
-  // Trava seção 2
   get("card2").classList.add("locked")
   get("lockNotice").classList.remove("visible")
  
-  // Reseta badges
   const b1 = get("badge1")
   b1.textContent = "1"
   b1.classList.remove("done")
@@ -672,35 +671,41 @@ function resetar() {
 function texto() {
   const r = estado.resultado
   return `Hoje descobri quanto realmente sobrou no meu bolso como motorista de app.
- 
+
 Lucro líquido: ${money(r.lucro)}
 Lucro por hora: ${money(r.lucroHora)}
 Lucro por km: ${money(r.lucroKm)}
 Classificação: ${r.classe}
- 
+
 Calculei aqui → ${SITE}`
 }
  
 function share() {
   if (!estado.resultado) return
   const t = texto()
+
+  if (typeof gtag === 'function') {
+    gtag('event', 'compartilhar')
+  }
+
   if (navigator.share) {
     navigator.share({ text: t, url: SITE })
   } else {
     navigator.clipboard.writeText(t)
     alert("Texto copiado! Cole onde quiser.")
-    gtag('event', 'compartilhar')
   }
 }
  
 function whatsapp() {
   if (!estado.resultado) return
-  window.open("https://wa.me/?text=" + encodeURIComponent(texto()))
-  gtag('event', 'whatsapp')
-}
 
+  if (typeof gtag === 'function') {
+    gtag('event', 'whatsapp')
+  }
+
+  window.open("https://wa.me/?text=" + encodeURIComponent(texto()))
+}
  
-// Mostra aviso de bloqueio ao tentar usar seção 2 antes da 1
 get("card2").addEventListener("click", function() {
   if (estado.custoKm === null) {
     get("lockNotice").classList.add("visible")
