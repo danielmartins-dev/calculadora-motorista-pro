@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<!-- Google tag (gtag.js) -->
+ <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z2JL7YWF4F"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -12,9 +12,7 @@
   gtag('config', 'G-Z2JL7YWF4F', {
     debug_mode: true
   });
-
-  </script>
-
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculadora de Lucro Real do Motorista</title>
@@ -162,7 +160,8 @@ label {
   letter-spacing: 0.05em;
 }
  
-input {
+input,
+select {
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -170,17 +169,21 @@ input {
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   padding: 11px 13px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
   -webkit-appearance: none;
   outline: none;
   width: 100%;
 }
-input:focus {
+input:focus,
+select:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 input::placeholder { color: var(--muted); opacity: 0.6; }
 input.error { border-color: var(--red); }
+input.disabled-look {
+  opacity: 0.55;
+}
  
 .input-hint {
   font-size: 11px;
@@ -377,6 +380,14 @@ input.error { border-color: var(--red); }
     </div>
  
     <div class="form-grid">
+      <div class="field full">
+        <label>Tipo de veículo</label>
+        <select id="vehicleType" onchange="atualizarCamposVeiculo()">
+          <option value="owned">Próprio / financiado</option>
+          <option value="rented">Alugado</option>
+        </select>
+      </div>
+
       <div class="field">
         <label>Preço do combustível</label>
         <input id="fuelPrice" placeholder="ex: 6,54" inputmode="decimal">
@@ -392,6 +403,7 @@ input.error { border-color: var(--red); }
       <div class="field">
         <label>Valor do carro</label>
         <input id="carValue" placeholder="ex: 45000" inputmode="decimal">
+        <div class="input-hint" id="carValueHint">Usado para calcular a depreciação.</div>
       </div>
       <div class="field">
         <label>Custo fixo mensal</label>
@@ -422,7 +434,7 @@ input.error { border-color: var(--red); }
         <div class="result-row"><span>IPVA / km</span><b id="ipva"></b></div>
         <div class="result-row"><span>Depreciação / km</span><b id="depr"></b></div>
       </div>
-      <p class="result-note">Depreciação estimada em 20% a.a. sobre o valor do carro</p>
+      <p class="result-note" id="depreciationNote">Depreciação estimada em 20% a.a. sobre o valor do carro</p>
       <div class="total-box">
         <span>Custo total por km</span>
         <b id="total"></b>
@@ -540,8 +552,35 @@ function validar(valor, nome) {
   }
   return true
 }
+
+function atualizarCamposVeiculo() {
+  const tipo = get("vehicleType").value
+  const carValueInput = get("carValue")
+  const hint = get("carValueHint")
+  const note = get("depreciationNote")
+
+  if (tipo === "rented") {
+    carValueInput.value = ""
+    carValueInput.disabled = true
+    carValueInput.classList.add("disabled-look")
+    carValueInput.placeholder = "não usado para carro alugado"
+    hint.textContent = "Para carro alugado, a depreciação não entra na conta."
+    if (note) {
+      note.textContent = "Para carro alugado, a depreciação foi zerada."
+    }
+  } else {
+    carValueInput.disabled = false
+    carValueInput.classList.remove("disabled-look")
+    carValueInput.placeholder = "ex: 45000"
+    hint.textContent = "Usado para calcular a depreciação."
+    if (note) {
+      note.textContent = "Depreciação estimada em 20% a.a. sobre o valor do carro"
+    }
+  }
+}
  
 function calcularCusto() {
+  const tipoVeiculo = get("vehicleType").value
   const precoCombustivel = parse(get("fuelPrice").value)
   const consumo = parse(get("kmPerLiter").value)
   const kmMes = parse(get("monthlyKm").value)
@@ -554,7 +593,7 @@ function calcularCusto() {
   if (!validar(precoCombustivel, "Preço do combustível")) return
   if (!validar(consumo, "Consumo km/l")) return
   if (!validar(kmMes, "Km por mês")) return
-  if (!validar(valorCarro, "Valor do carro")) return
+  if (tipoVeiculo !== "rented" && !validar(valorCarro, "Valor do carro")) return
  
   const kmAno = kmMes * 12
  
@@ -562,7 +601,7 @@ function calcularCusto() {
   const seguroKm = seguroAnual / kmAno
   const ipvaKm = ipvaAnual / kmAno
   const manutencaoKm = manutencao / kmMes
-  const depreciacaoKm = (valorCarro * 0.20) / kmAno
+  const depreciacaoKm = tipoVeiculo === "rented" ? 0 : (valorCarro * 0.20) / kmAno
   const custoFixoKm = custoFixo > 0 ? custoFixo / kmMes : 0
  
   const total = combustivelKm + seguroKm + ipvaKm + manutencaoKm + depreciacaoKm + custoFixoKm
@@ -574,6 +613,11 @@ function calcularCusto() {
   get("depr").textContent = money(depreciacaoKm)
   get("fix").textContent = money(custoFixoKm)
   get("total").textContent = money(total)
+
+  get("depreciationNote").textContent =
+    tipoVeiculo === "rented"
+      ? "Para carro alugado, a depreciação foi zerada."
+      : "Depreciação estimada em 20% a.a. sobre o valor do carro"
  
   get("costResult").classList.add("visible")
   get("badge1").textContent = "✓"
@@ -653,6 +697,8 @@ function resetar() {
   if (!confirm("Limpar todos os campos e começar de novo?")) return
  
   document.querySelectorAll("input").forEach(i => i.value = "")
+  get("vehicleType").value = "owned"
+  atualizarCamposVeiculo()
  
   estado = { custoKm: null, resultado: null }
  
@@ -715,6 +761,8 @@ get("card2").addEventListener("click", function() {
     get("lockNotice").classList.add("visible")
   }
 })
+
+atualizarCamposVeiculo()
 </script>
 </body>
 </html>
